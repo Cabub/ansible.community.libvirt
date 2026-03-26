@@ -36,6 +36,12 @@ options:
             - name
             - uuid
         default: "name"
+    include_xml_desc:
+        description: |
+            Includes the XML description of the libvirt domain as a
+            variable named 'xml_desc'. Default: true
+        type: bool
+        default: true
 '''
 
 EXAMPLES = r'''
@@ -153,11 +159,12 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
                     domain_info
                 )
 
-                self.inventory.set_variable(
-                    inventory_hostname,
-                    'xml_desc',
-                    domain.XMLDesc()
-                )
+                if self.get_option('include_xml_desc'):
+                    self.inventory.set_variable(
+                        inventory_hostname,
+                        'xml_desc',
+                        domain.XMLDesc()
+                    )
 
                 # This needs the guest powered on, 'qemu-guest-agent' installed and the org.qemu.guest_agent.0 channel configured.
                 domain_guestInfo = ''
